@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import {
   pgTable,
   serial,
@@ -8,6 +7,7 @@ import {
   integer,
   text,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const customers = pgTable("customers", {
   id: serial("id").primaryKey(),
@@ -16,10 +16,10 @@ export const customers = pgTable("customers", {
   email: varchar("email").unique().notNull(),
   phone: varchar("phone").unique().notNull(),
   address1: varchar("address1").notNull(),
-  address2: varchar("address2").notNull(),
+  address2: varchar("address2"),
   city: varchar("city").notNull(),
   state: varchar("state", { length: 2 }).notNull(),
-  zip: varchar("zip").notNull(),
+  zip: varchar("zip", { length: 10 }).notNull(),
   notes: text("notes"),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -35,9 +35,9 @@ export const tickets = pgTable("tickets", {
     .notNull()
     .references(() => customers.id),
   title: varchar("title").notNull(),
-  description: varchar("description"),
+  description: text("description"),
   completed: boolean("completed").notNull().default(false),
-  tech: varchar("tech").default("unassigned"),
+  tech: varchar("tech").notNull().default("unassigned"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -45,6 +45,7 @@ export const tickets = pgTable("tickets", {
     .$onUpdate(() => new Date()),
 });
 
+// Create relations
 export const customersRelations = relations(customers, ({ many }) => ({
   tickets: many(tickets),
 }));
