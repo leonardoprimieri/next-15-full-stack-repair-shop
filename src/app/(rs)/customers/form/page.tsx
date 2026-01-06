@@ -2,6 +2,7 @@
 import { BackButton } from "@/components/back-button/back-button";
 import { getCustomer } from "@/lib/queries/get-customer";
 import * as Sentry from "@sentry/nextjs";
+import { CustomerForm } from "./components/customer-form/customer-form";
 
 export default async function CustomerFormPage({
   searchParams,
@@ -24,7 +25,11 @@ export default async function CustomerFormPage({
           </>
         );
       }
+
+      return <CustomerForm customer={customer} />;
     }
+
+    return <CustomerForm />;
   } catch (e) {
     if (e instanceof Error) {
       Sentry.captureException(e);
