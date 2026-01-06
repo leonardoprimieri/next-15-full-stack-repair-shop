@@ -5,7 +5,7 @@ import {
   insertCustomersSchemaType,
   selectCustomersSchemaType,
 } from "@/validation/customer-validation-schema";
-import { Form, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputWithLabel } from "@/components/inputs/input-with-label";
 import { Button } from "@/components/ui/button";
