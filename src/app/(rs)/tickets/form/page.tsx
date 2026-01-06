@@ -27,9 +27,7 @@ export default async function TicketsFormPage({
     if (!customer) {
       return (
         <>
-          <h2 className="text-2xl mb-2">
-            Customer ID #{customerId} not found
-          </h2>
+          <h2 className="text-2xl mb-2">Customer ID #{customerId} not found</h2>
           <BackButton title="Go Back" variant="default" />
         </>
       );
