@@ -2,6 +2,7 @@
 
 import { CheckboxWithLabel } from "@/components/inputs/checkbox-with-label";
 import { InputWithLabel } from "@/components/inputs/input-with-label";
+import { SelectWithLabel } from "@/components/inputs/select-with-label";
 import { TextAreaWithLabel } from "@/components/inputs/text-area-with-label";
 import { Button } from "@/components/ui/button";
 import { selectCustomersSchemaType } from "@/validation/customer-validation-schema";
@@ -16,9 +17,16 @@ import { FormProvider, useForm } from "react-hook-form";
 type Props = {
   customer?: selectCustomersSchemaType;
   ticket?: selectTicketSchemaType;
+  techs?: {
+    id: string;
+    description: string;
+  }[];
+  isEditable?: boolean;
 };
 
-export function TicketForm(props: Props) {
+export function TicketForm({ isEditable = true, ...props }: Props) {
+  const isManager = Array.isArray(props.techs);
+
   const form = useForm<insertTicketSchemaType>({
     defaultValues: {
       id: props.ticket?.id ?? "(New)",
@@ -40,7 +48,7 @@ export function TicketForm(props: Props) {
     <div className="flex flex-col gap-1 sm:px-8">
       <div>
         <h2 className="text-2xl font-bold">
-          {props.ticket?.id ? "Edit" : "New"} Ticket{" "}
+          {props.ticket?.id && isEditable ? "Edit" : "New"} Ticket{" "}
           {props.ticket?.id ? `# ${props.ticket.id}` : "Form"}
         </h2>
         <FormProvider {...form}>
@@ -52,18 +60,37 @@ export function TicketForm(props: Props) {
               <InputWithLabel<insertTicketSchemaType>
                 fieldTitle="Title"
                 nameInSchema="title"
-              />
-              <InputWithLabel<insertTicketSchemaType>
-                fieldTitle="Tech"
-                nameInSchema="tech"
-                disabled
+                disabled={!isEditable}
               />
 
-              <CheckboxWithLabel<insertTicketSchemaType>
-                fieldTitle="Completed"
-                nameInSchema="completed"
-                message="Yes"
-              />
+              {isManager ? (
+                <SelectWithLabel<insertTicketSchemaType>
+                  fieldTitle="Tech ID"
+                  nameInSchema="tech"
+                  data={[
+                    {
+                      id: "new-ticket@example.com",
+                      description: "new-ticket@example.com",
+                    },
+                    ...props.techs!,
+                  ]}
+                />
+              ) : (
+                <InputWithLabel<insertTicketSchemaType>
+                  fieldTitle="Tech"
+                  nameInSchema="tech"
+                  disabled
+                />
+              )}
+
+              {!!props.ticket?.id && (
+                <CheckboxWithLabel<insertTicketSchemaType>
+                  fieldTitle="Completed"
+                  nameInSchema="completed"
+                  message="Yes"
+                  disabled={!isEditable}
+                />
+              )}
 
               <div className="mt-4 space-y-2">
                 <h3 className="text-lg">Customer Info</h3>
@@ -90,21 +117,24 @@ export function TicketForm(props: Props) {
                 fieldTitle="Description"
                 nameInSchema="description"
                 className="h-96"
+                disabled={!isEditable}
               />
 
-              <div className="flex gap-2">
-                <Button className="w-3/4" title="Save" type="submit">
-                  Save
-                </Button>
-                <Button
-                  title="Reset"
-                  onClick={() => form.reset()}
-                  type="button"
-                  variant="destructive"
-                >
-                  Reset
-                </Button>
-              </div>
+              {isEditable && (
+                <div className="flex gap-2">
+                  <Button className="w-3/4" title="Save" type="submit">
+                    Save
+                  </Button>
+                  <Button
+                    title="Reset"
+                    onClick={() => form.reset()}
+                    type="button"
+                    variant="destructive"
+                  >
+                    Reset
+                  </Button>
+                </div>
+              )}
             </div>
           </form>
         </FormProvider>

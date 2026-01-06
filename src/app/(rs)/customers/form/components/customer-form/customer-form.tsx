@@ -12,12 +12,19 @@ import { Button } from "@/components/ui/button";
 import { TextAreaWithLabel } from "@/components/inputs/text-area-with-label";
 import { SelectWithLabel } from "@/components/inputs/select-with-label";
 import { StatesArray } from "@/constants/states-array";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { CheckboxWithLabel } from "@/components/inputs/checkbox-with-label";
 
 type Props = {
   customer?: selectCustomersSchemaType;
 };
 
 export function CustomerForm(props: Props) {
+  const kindeAuth = useKindeBrowserClient();
+
+  const isManager =
+    !kindeAuth.isLoading && kindeAuth.getPermission("manager")?.isGranted;
+
   const form = useForm<insertCustomersSchemaType>({
     mode: "onBlur",
     resolver: zodResolver(insertCustomerSchema),
@@ -33,6 +40,7 @@ export function CustomerForm(props: Props) {
       state: props.customer?.state ?? "",
       zip: props.customer?.zip ?? "",
       notes: props.customer?.notes ?? "",
+      active: props.customer?.active ?? true,
     },
   });
 
@@ -44,7 +52,8 @@ export function CustomerForm(props: Props) {
     <div className="flex flex-col gap-1 sm:px-8">
       <div>
         <h2 className="text-2xl font-bold">
-          {props.customer?.id ? "Edit" : "New"} Customer Form
+          {props.customer?.id ? "Edit" : "New"} Customer{" "}
+          {props.customer?.id ? `#${props.customer?.id}` : "Form"}
         </h2>
         <FormProvider {...form}>
           <form
@@ -105,6 +114,14 @@ export function CustomerForm(props: Props) {
                 nameInSchema="notes"
                 className="h-40"
               />
+
+              {isManager && props.customer?.id && (
+                <CheckboxWithLabel<insertCustomersSchemaType>
+                  fieldTitle="Active"
+                  nameInSchema="active"
+                  message="Yes"
+                />
+              )}
 
               <div className="flex gap-2">
                 <Button className="w-3/4" title="Save" type="submit">
