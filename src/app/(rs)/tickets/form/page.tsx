@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/error-boundaries */
 
-import { BackButton } from "@/src/components/back-button/back-button";
-import { getCustomer } from "@/src/lib/queries/get-customer";
-import { getTicket } from "@/src/lib/queries/get-ticket";
+import { BackButton } from "@/components/back-button/back-button";
+import { getCustomer } from "@/lib/queries/get-customer";
+import { getTicket } from "@/lib/queries/get-ticket";
 import * as Sentry from "@sentry/nextjs";
 
 export default async function TicketsFormPage({
