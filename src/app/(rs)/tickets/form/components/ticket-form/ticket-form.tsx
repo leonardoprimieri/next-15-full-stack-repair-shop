@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckboxWithLabel } from "@/components/inputs/checkbox-with-label";
 import { InputWithLabel } from "@/components/inputs/input-with-label";
 import { TextAreaWithLabel } from "@/components/inputs/text-area-with-label";
 import { Button } from "@/components/ui/button";
@@ -55,8 +56,15 @@ export function TicketForm(props: Props) {
               <InputWithLabel<insertTicketSchemaType>
                 fieldTitle="Tech"
                 nameInSchema="tech"
-                readOnly
+                disabled
               />
+
+              <CheckboxWithLabel<insertTicketSchemaType>
+                fieldTitle="Completed"
+                nameInSchema="completed"
+                message="Yes"
+              />
+
               <div className="mt-4 space-y-2">
                 <h3 className="text-lg">Customer Info</h3>
                 <hr className="w-4/5" />
