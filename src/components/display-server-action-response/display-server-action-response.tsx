@@ -9,7 +9,6 @@ type Props = {
 };
 
 export function DisplayServerActionResponse(props: Props) {
-  console.log("🚀 ~ DisplayServerActionResponse ~ props:", props);
   if (props.result.data) {
     return (
       <MessageBox

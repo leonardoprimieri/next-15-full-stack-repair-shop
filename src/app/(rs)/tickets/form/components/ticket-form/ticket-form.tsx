@@ -1,5 +1,7 @@
 "use client";
 
+import { saveTicketAction } from "@/app/actions/save-ticket-action";
+import { DisplayServerActionResponse } from "@/components/display-server-action-response/display-server-action-response";
 import { CheckboxWithLabel } from "@/components/inputs/checkbox-with-label";
 import { InputWithLabel } from "@/components/inputs/input-with-label";
 import { SelectWithLabel } from "@/components/inputs/select-with-label";
@@ -12,7 +14,10 @@ import {
   selectTicketSchemaType,
 } from "@/validation/ticket-validation-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircleIcon } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type Props = {
   customer?: selectCustomersSchemaType;
@@ -40,12 +45,26 @@ export function TicketForm({ isEditable = true, ...props }: Props) {
     resolver: zodResolver(insertTicketSchema),
   });
 
+  const saveTicketFormAction = useAction(saveTicketAction, {
+    onSuccess({ data }) {
+      toast.success("Success", {
+        description: data.message,
+      });
+    },
+    onError() {
+      toast.error("Something went wrong", {
+        description: "Save Failed",
+      });
+    },
+  });
+
   async function onSubmit(data: insertTicketSchemaType) {
-    console.log(data);
+    saveTicketFormAction.execute(data);
   }
 
   return (
     <div className="flex flex-col gap-1 sm:px-8">
+      <DisplayServerActionResponse result={saveTicketFormAction.result} />
       <div>
         <h2 className="text-2xl font-bold">
           {props.ticket?.id && isEditable ? "Edit" : "New"} Ticket{" "}
@@ -122,12 +141,24 @@ export function TicketForm({ isEditable = true, ...props }: Props) {
 
               {isEditable && (
                 <div className="flex gap-2">
-                  <Button className="w-3/4" title="Save" type="submit">
-                    Save
+                  <Button
+                    className="w-3/4"
+                    title="Save"
+                    type="submit"
+                    disabled={saveTicketFormAction.isExecuting}
+                  >
+                    {saveTicketFormAction.isExecuting ? (
+                      <LoaderCircleIcon className="animate-spin" />
+                    ) : (
+                      "Save"
+                    )}
                   </Button>
                   <Button
                     title="Reset"
-                    onClick={() => form.reset()}
+                    onClick={() => {
+                      form.reset();
+                      saveTicketFormAction.reset();
+                    }}
                     type="button"
                     variant="destructive"
                   >
