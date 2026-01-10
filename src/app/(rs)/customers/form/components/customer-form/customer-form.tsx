@@ -14,6 +14,11 @@ import { SelectWithLabel } from "@/components/inputs/select-with-label";
 import { StatesArray } from "@/constants/states-array";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { CheckboxWithLabel } from "@/components/inputs/checkbox-with-label";
+import { saveCustomerAction } from "@/app/actions/save-customer-action";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
+import { LoaderCircleIcon } from "lucide-react";
+import { DisplayServerActionResponse } from "@/components/display-server-action-response/display-server-action-response";
 
 type Props = {
   customer?: selectCustomersSchemaType;
@@ -44,12 +49,26 @@ export function CustomerForm(props: Props) {
     },
   });
 
+  const saveCustomerFormAction = useAction(saveCustomerAction, {
+    onSuccess({ data }) {
+      toast.success("Success", {
+        description: data.message,
+      });
+    },
+    onError() {
+      toast.error("Something went wrong", {
+        description: "Save Failed",
+      });
+    },
+  });
+
   async function onSubmit(data: insertCustomersSchemaType) {
-    console.log(data);
+    saveCustomerFormAction.execute(data);
   }
 
   return (
     <div className="flex flex-col gap-1 sm:px-8">
+      <DisplayServerActionResponse result={saveCustomerFormAction.result} />
       <div>
         <h2 className="text-2xl font-bold">
           {props.customer?.id ? "Edit" : "New"} Customer{" "}
@@ -124,12 +143,24 @@ export function CustomerForm(props: Props) {
               )}
 
               <div className="flex gap-2">
-                <Button className="w-3/4" title="Save" type="submit">
-                  Save
+                <Button
+                  className="w-3/4"
+                  title="Save"
+                  type="submit"
+                  disabled={saveCustomerFormAction.isExecuting}
+                >
+                  {saveCustomerFormAction.isExecuting ? (
+                    <LoaderCircleIcon className="animate-spin" />
+                  ) : (
+                    "Save"
+                  )}
                 </Button>
                 <Button
                   title="Reset"
-                  onClick={() => form.reset()}
+                  onClick={() => {
+                    form.reset();
+                    saveCustomerFormAction.reset();
+                  }}
                   type="button"
                   variant="destructive"
                 >

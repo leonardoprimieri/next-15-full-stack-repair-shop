@@ -18,7 +18,7 @@ export const actionClient = createSafeActionClient({
       scope.setContext("clientInput", { clientInput });
       return scope;
     });
-    if (e.constructor.name === "DatabaseError") {
+    if (e.constructor.name === "NeonDbError") {
       return "Database Error";
     }
     return e.message;
