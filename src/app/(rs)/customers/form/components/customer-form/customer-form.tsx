@@ -149,9 +149,9 @@ export function CustomerForm(props: Props) {
                   className="w-3/4"
                   title="Save"
                   type="submit"
-                  disabled={saveCustomerFormAction.isExecuting}
+                  disabled={saveCustomerFormAction.isPending}
                 >
-                  {saveCustomerFormAction.isExecuting ? (
+                  {saveCustomerFormAction.isPending ? (
                     <LoaderCircleIcon className="animate-spin" />
                   ) : (
                     "Save"

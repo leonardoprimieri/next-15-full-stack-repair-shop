@@ -147,9 +147,9 @@ export function TicketForm({ isEditable = true, ...props }: Props) {
                     className="w-3/4"
                     title="Save"
                     type="submit"
-                    disabled={saveTicketFormAction.isExecuting}
+                    disabled={saveTicketFormAction.isPending}
                   >
-                    {saveTicketFormAction.isExecuting ? (
+                    {saveTicketFormAction.isPending ? (
                       <LoaderCircleIcon className="animate-spin" />
                     ) : (
                       "Save"
