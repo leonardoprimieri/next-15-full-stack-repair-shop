@@ -51,9 +51,11 @@ export function CustomerForm(props: Props) {
 
   const saveCustomerFormAction = useAction(saveCustomerAction, {
     onSuccess({ data }) {
-      toast.success("Success", {
-        description: data.message,
-      });
+      if (data?.message) {
+        toast.success("Success", {
+          description: data.message,
+        });
+      }
     },
     onError() {
       toast.error("Something went wrong", {

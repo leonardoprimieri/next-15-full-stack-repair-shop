@@ -47,9 +47,11 @@ export function TicketForm({ isEditable = true, ...props }: Props) {
 
   const saveTicketFormAction = useAction(saveTicketAction, {
     onSuccess({ data }) {
-      toast.success("Success", {
-        description: data.message,
-      });
+      if (data?.message) {
+        toast.success("Success", {
+          description: data.message,
+        });
+      }
     },
     onError() {
       toast.error("Something went wrong", {
